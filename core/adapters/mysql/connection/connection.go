@@ -1,7 +1,7 @@
 package connection
 
 import (
-	"user-domain-go/core/domain"
+	"iam-examples-go/core/domain"
 
 	"fmt"
 

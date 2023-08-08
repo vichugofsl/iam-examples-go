@@ -3,8 +3,8 @@ package usermigration
 import (
 	"fmt"
 
-	"user-domain-go/core/adapters/mysql/connection"
-	"user-domain-go/core/adapters/mysql/repository"
+	"iam-examples-go/core/adapters/mysql/connection"
+	"iam-examples-go/core/adapters/mysql/repository"
 
 	"github.com/spf13/cobra"
 )
@@ -38,15 +38,14 @@ func MigrateUser() error {
 	}
 
 	users := repository.NewUsersRepository(con)
-
-	totalRecordsToMigrate, err := users.Total()
+	totalUsersToMigrate, err := users.Total()
 
 	if err != nil {
 		fmt.Println("Error get Total iam users", err)
 		return err
 	}
 
-	fmt.Println("totalWrongRecords: ", totalRecordsToMigrate)
+	fmt.Println("total Users Records: ", totalUsersToMigrate)
 
 	err = users.CreateNewTable()
 
@@ -61,6 +60,56 @@ func MigrateUser() error {
 		fmt.Println("Error to extract new iam users enty", err)
 		return err
 	}
+
+	userKeys := repository.NewUserKeysRepository(con)
+	totalUserKeysToMigrate, err := userKeys.Total()
+
+	if err != nil {
+		fmt.Println("Error get Total iam users", err)
+		return err
+	}
+
+	fmt.Println("total User Keys Records: ", totalUserKeysToMigrate)
+
+	err = userKeys.CreateNewTable()
+
+	if err != nil {
+		fmt.Println("Error to create new iam users entities", err)
+		return err
+	}
+
+	err = userKeys.ExtractIAMUserKeys()
+
+	if err != nil {
+		fmt.Println("Error to extract new iam users keys entities", err)
+		return err
+	}
+
+	accessGroup := repository.NewAccessGroupApiKeysRepository(con)
+	totalAccessGroupToMigrate, err := accessGroup.Total()
+
+	if err != nil {
+		fmt.Println("Error get Total iam access group api key users", err)
+		return err
+	}
+
+	fmt.Println("total User Keys Records: ", totalAccessGroupToMigrate)
+
+	err = accessGroup.CreateNewTable()
+
+	if err != nil {
+		fmt.Println("Error to create new iam users entities", err)
+		return err
+	}
+
+	err = accessGroup.ExtractIAMAccessGroupApiKeys()
+
+	if err != nil {
+		fmt.Println("Error to extract new iam users keys entities", err)
+		return err
+	}
+
+	fmt.Println("It is done!")
 
 	return nil
 }

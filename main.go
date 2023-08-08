@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"user-uploader-go/cmd/cli"
+	"iam-examples-go/cmd/cli"
 )
 
 func main() {

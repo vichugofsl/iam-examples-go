@@ -2,14 +2,13 @@ package repository
 
 import (
 	"fmt"
+	"iam-examples-go/core/domain"
+	"iam-examples-go/core/ports/repository"
 	"log"
-	"user-domain-go/core/domain"
-	"user-domain-go/core/ports/repository"
 
 	"gorm.io/gorm"
 )
 
-// Repository to handle the records of BibleFileWithGaps temp entity
 type UsersRepository struct {
 	db *gorm.DB
 }
@@ -43,7 +42,6 @@ func (r UsersRepository) ExtractIAMUsers() error {
 			Activated: user.Activated,
 			Token:     user.Activated,
 		}
-		log.Printf("It will store %v", iamUser)
 		result := r.db.Create(&iamUser)
 
 		if result.Error != nil {
@@ -53,10 +51,14 @@ func (r UsersRepository) ExtractIAMUsers() error {
 	return nil
 }
 
-// This method retrieves a list of BibleFileWithGaps records from the database, applying the provided limit and offset to the query.
 func (r UsersRepository) List() ([]domain.Users, error) {
 	var users []domain.Users
-	result := r.db.Model(&domain.Users{}).Joins("JOIN user_keys ON user_keys.user_id = users.id").Where("deleted_at IS NULL").Find(&users)
+	result := r.db.
+		Model(&domain.Users{}).
+		Joins("JOIN user_keys ON user_keys.user_id = users.id").
+		Where("deleted_at IS NULL").
+		Group("users.id").
+		Find(&users)
 	if result.Error != nil {
 		fmt.Println("Error fetching Users:", result.Error)
 		return nil, result.Error
@@ -68,8 +70,12 @@ func (r UsersRepository) List() ([]domain.Users, error) {
 // This method returns the total count of records in the Users table.
 func (r UsersRepository) Total() (int64, error) {
 	var count int64
-	// result := r.db.Model(&domain.Users{}).Count(&count)
-	result := r.db.Model(&domain.Users{}).Joins("JOIN user_keys ON user_keys.user_id = users.id").Where("deleted_at IS NULL").Count(&count)
+	result := r.db.
+		Model(&domain.Users{}).
+		Joins("JOIN user_keys ON user_keys.user_id = users.id").
+		Where("deleted_at IS NULL").
+		Group("users.id").
+		Count(&count)
 	if result.Error != nil {
 		fmt.Println("Error counting Users:", result.Error)
 		return 0, result.Error

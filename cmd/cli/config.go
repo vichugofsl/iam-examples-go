@@ -1,14 +1,14 @@
 package cli
 
 import (
-	"user-uploader-go/cmd/cli/usermigration"
+	"iam-examples-go/cmd/cli/usermigration"
 
 	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
 	Use:   "user-uploader-go",
-	Short: "CLI command for updating records in the bible_file_timestamps entity",
+	Short: "CLI command for creating records in the iam_user, iam_user_keys and iam_access_group_api_key entity",
 	Long: `user-uploader-go is a CLI tool built in Go, which creates new records in the
 iam_user entity after running a specific SQL query on a MySQL database.`,
 }

@@ -7,7 +7,7 @@ import (
 )
 
 type UserKeys struct {
-	gorm.Model
+	ID          uint `gorm:"primarykey"`
 	UserId      uint
 	Key         string
 	Name        string
@@ -19,4 +19,18 @@ type UserKeys struct {
 
 func (UserKeys) TableName() string {
 	return "user_keys"
+}
+
+type IAMUserKeys struct {
+	gorm.Model
+	OldId       uint
+	UserId      uint
+	Key         string
+	Name        string
+	Description string
+	User        IAMUsers
+}
+
+func (IAMUserKeys) TableName() string {
+	return "iam_user_keys"
 }
